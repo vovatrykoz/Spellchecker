@@ -44,7 +44,7 @@ T findCentralMedoid(const std::list<T>& points, const std::function<int(T, T)>& 
 
     ObjectDistance<T> centralPoint = { points.front(), sumOfDistances(points.front(), points, distanceFunction) };
 
-    auto blockStart = std::next(points.begin());
+    auto blockStart = points.begin();
 
     // some of the code is taken from C++ Concurrency in Action, 2nd edition by Anthony Williams
     unsigned long const length = std::distance(blockStart, points.end()); //linear, would be more efficient with random access iterators
@@ -53,13 +53,16 @@ T findCentralMedoid(const std::list<T>& points, const std::function<int(T, T)>& 
         return centralPoint.object;
     }
 
+    unsigned long const minPerThread = 1;
     unsigned long const hardwareThreads = std::thread::hardware_concurrency();
+    unsigned long const maxThreads = (length + minPerThread - 1) / minPerThread;
     // size of a block we want to send to the async function
-    unsigned long const blockSize = length / hardwareThreads;
+    unsigned long const numThreads = std::min(hardwareThreads != 0 ? hardwareThreads : 2, maxThreads);
+    unsigned long const blockSize = length / numThreads;
 
     std::list<std::future<ObjectDistance<T>>> centralCandidates;
 
-    for(unsigned long i = 0; i < (hardwareThreads - 1); i++) {
+    for(unsigned long i = 0; i < (numThreads - 1); i++) {
         auto blockEnd = blockStart;
         // linear
         std::advance(blockEnd, blockSize);

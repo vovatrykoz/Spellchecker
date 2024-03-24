@@ -43,6 +43,12 @@ int main(int argc, char *argv[])
     auto sduration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
     std::cout << "Done in " << sduration.count() << " s!" << std::endl << std::endl;
 
+    int total = 0;
+
+    for(const auto& clust : clusterMap) {
+        total += clust.second.size();
+    }
+
     std::string input = "";
 
     std::cout << "Enter your word and the program will try to correct it" << std::endl << std::endl;
