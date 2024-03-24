@@ -15,7 +15,7 @@ struct ObjectDistance {
 };
 
 template<typename T>
-int sumOfDistances(const T& input, const std::list<T>& points, std::function<int(T, T)> distanceFunction) {
+int sumOfDistances(const T& input, const std::list<T>& points, const std::function<int(T, T)>& distanceFunction) {
     int distance = 0;
 
     for(const auto& point : points) {
@@ -37,7 +37,7 @@ void removeItemsFromSet(std::unordered_set<T>& set, const std::list<T>& itemsToR
 }
 
 template<typename T>
-T findCentralMedoid(const std::list<T>& points, std::function<int(T, T)> distanceFunction) {
+T findCentralMedoid(const std::list<T>& points, const std::function<int(T, T)>& distanceFunction) {
     if(points.size() == 0) {
         return T();
     }
@@ -97,7 +97,7 @@ T findCentralMedoid(const std::list<T>& points, std::function<int(T, T)> distanc
 }
 
 template<typename T, typename Iterator>
-T findFurthestElement(const T& input, Iterator first, Iterator end, std::function<int(T, T)> distanceFunction) {
+T findFurthestElement(const T& input, Iterator first, Iterator end, const std::function<int(T, T)>& distanceFunction) {
     T furthestPoint = *(first);
     int furthestDistance = distanceFunction(input, furthestPoint);
     int currentDistance;
@@ -121,7 +121,11 @@ T findFurthestElement(const T& input, Iterator first, Iterator end, std::functio
 /// @param distanceFunction function used to calculate distance between two points
 /// @return map of clusters, where the key is the most central point in a cluster and value is the cluster itself
 template<typename T>
-std::unordered_map<T, std::list<T>> partitionIntoClusters(const T& firstMedoid, const T& secondMedoid, const std::unordered_set<T>& points, std::function<int(T, T)> distanceFunction) {
+std::unordered_map<T, std::list<T>> partitionIntoClusters(const T& firstMedoid, 
+                                                            const T& secondMedoid, 
+                                                            const std::unordered_set<T>& points, 
+                                                            const std::function<int(T, T)>& distanceFunction
+                                                            ) {
     std::unordered_map<T, std::list<T>> clusterMap;
     int distanceToFirst, distanceToSecond;
 
@@ -141,7 +145,10 @@ std::unordered_map<T, std::list<T>> partitionIntoClusters(const T& firstMedoid, 
 }
 
 template<typename T>
-std::unordered_map<T, std::list<T>> partitionIntoClusters(const std::list<T>& medoids, const std::list<T>& points, std::function<int(T, T)> distanceFunction) {
+std::unordered_map<T, std::list<T>> partitionIntoClusters(const std::list<T>& medoids, 
+                                                            const std::list<T>& points, 
+                                                            const std::function<int(T, T)>& distanceFunction
+                                                            ) {
     std::unordered_map<T, std::list<T>> clusterMap;
     int distanceToFirst, distanceToSecond;
 
@@ -166,7 +173,10 @@ std::unordered_map<T, std::list<T>> partitionIntoClusters(const std::list<T>& me
 }
 
 template<typename T>
-std::list<T> anomalousPatternInitialisation(const std::list<T>& points, std::function<int(T, T)> distanceFunction, std::function<T(const std::list<T>&)> centralityFunction) {
+std::list<T> anomalousPatternInitialisation(const std::list<T>& points, 
+                                            const std::function<int(T, T)>& distanceFunction, 
+                                            const std::function<T(const std::list<T>&)>& centralityFunction
+                                            ) {
     std::list<T> medoids;
 
     // find the most central element
@@ -213,7 +223,8 @@ std::list<T> anomalousPatternInitialisation(const std::list<T>& points, std::fun
 template<typename T>
 std::unordered_map<T, std::list<T>> partitionAroundMedoids(const std::list<T>& points,
                                                             std::function<int(T, T)> distanceFunction,
-                                                            std::function<T(const std::list<T>&)> centralityFunction) {
+                                                            const std::function<T(const std::list<T>&)>& centralityFunction
+                                                            ) {
     
     std::unordered_map<T, std::list<T>> clusterMap;
 
@@ -232,7 +243,7 @@ std::unordered_map<T, std::list<T>> partitionAroundMedoids(const std::list<T>& p
 /// @param distanceFunction function used to calculate distance between points
 /// @return map of clusters, where the key is the most central point in a cluster and value is the cluster itself
 template<typename T>
-std::unordered_map<T, std::list<T>> partitionAroundMedoids(const std::list<T>& points, std::function<int(T, T)> distanceFunction) {
+std::unordered_map<T, std::list<T>> partitionAroundMedoids(const std::list<T>& points, const std::function<int(T, T)>& distanceFunction) {
     return partitionAroundMedoids<T>(points, distanceFunction, [&distanceFunction](const std::list<T>& innerPoints) {
         return findCentralMedoid(innerPoints, distanceFunction);
     });
