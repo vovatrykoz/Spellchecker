@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     auto stop = std::chrono::high_resolution_clock::now();
     auto sduration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
     std::cout << "Done in " << sduration.count() << " s!" << std::endl << std::endl;
-    
+
     std::string input = "";
 
     std::cout << "Enter your word and the program will try to correct it" << std::endl << std::endl;
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
         stop = std::chrono::high_resolution_clock::now();
         auto mduration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 
-        std::cout << "Corrections (" << mduration.count() << " ms):"<< std::endl;
+        std::cout << "Corrections (" << mduration.count() << " microseconds):"<< std::endl;
         printListOfWords(suggestions);
         std::cout << std::endl;
     }
