@@ -31,13 +31,13 @@ T findCentralMedoid(const std::list<T>& points, std::function<int(T, T)> distanc
     return centralPoint;
 }
 
-template<typename T, typename Container>
-T findFurthestElement(const T& input, const Container& points, std::function<int(T, T)> distanceFunction) {
-    T furthestPoint = *(points.begin());
+template<typename T, typename Iterator>
+T findFurthestElement(const T& input, const Iterator& first, const Iterator& end, std::function<int(T, T)> distanceFunction) {
+    T furthestPoint = *(first);
     int furthestDistance = distanceFunction(input, furthestPoint);
     int currentDistance;
 
-    for(auto it = std::next(points.begin()); it != points.end(); ++it) {
+    for(auto it = std::next(first); it != end; ++it) {
         currentDistance = distanceFunction(input, *it);
 
         if(currentDistance > furthestDistance) {
@@ -117,7 +117,7 @@ std::list<T> anomalousPatternInitialisation(const std::list<T>& points, std::fun
     while(remaining.size() != 0) {
 
         //find the element furthest away from the central
-        T furthestMedoid = findFurthestElement<T, std::unordered_set<T>>(startingMedoid, remaining, distanceFunction);
+        T furthestMedoid = findFurthestElement<T>(startingMedoid, remaining.begin(), remaining.end(), distanceFunction);
         std::unordered_map<T, std::list<T>> clusterMap = partitionIntoClusters(startingMedoid, furthestMedoid, remaining, distanceFunction);
         T newFurthestMedoid = centralityFunction(clusterMap[furthestMedoid]);
 
