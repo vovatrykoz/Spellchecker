@@ -53,7 +53,7 @@ T findCentralMedoid(const std::list<T>& points, const std::function<int(T, T)>& 
         return centralPoint.object;
     }
 
-    unsigned long const minPerThread = 1;
+    unsigned long const minPerThread = 25;
     unsigned long const hardwareThreads = std::thread::hardware_concurrency();
     unsigned long const maxThreads = (length + minPerThread - 1) / minPerThread;
     // size of a block we want to send to the async function
