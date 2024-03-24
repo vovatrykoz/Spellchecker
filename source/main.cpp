@@ -5,6 +5,7 @@
 #include <fstream>
 #include <chrono>
 
+#include "clustering.h"
 #include "spellchecker.h"
 
 int readWordsFromFile(std::list<std::string>& words, std::string filePath);

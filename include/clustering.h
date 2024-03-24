@@ -1,8 +1,12 @@
+#ifndef _CLUSTERING_H_
+#define _CLUSTERING_H_
+
 #include <unordered_map>
 #include <functional>
 #include <unordered_set>
 #include <thread>
 #include <future>
+#include <list>
 
 template<typename T>
 struct ObjectDistance {
@@ -233,3 +237,5 @@ std::unordered_map<T, std::list<T>> partitionAroundMedoids(const std::list<T>& p
         return findCentralMedoid(innerPoints, distanceFunction);
     });
 }
+
+#endif
