@@ -14,6 +14,17 @@ int sumOfDistances(const T& input, const std::list<T>& points, std::function<int
 }
 
 template<typename T>
+void removeItemsFromSet(std::unordered_set<T>& set, const std::list<T>& itemsToRemove) {
+    for(const auto& item : itemsToRemove) {
+        auto result = set.find(item);
+
+        if(result != set.end()) {
+            set.erase(result);
+        }
+    }
+}
+
+template<typename T>
 T findCentralMedoid(const std::list<T>& points, std::function<int(T, T)> distanceFunction) {
     T centralPoint = points.front();
     int shortestDistance = sumOfDistances(centralPoint, points, distanceFunction);
@@ -32,7 +43,7 @@ T findCentralMedoid(const std::list<T>& points, std::function<int(T, T)> distanc
 }
 
 template<typename T, typename Iterator>
-T findFurthestElement(const T& input, const Iterator& first, const Iterator& end, std::function<int(T, T)> distanceFunction) {
+T findFurthestElement(const T& input, Iterator first, Iterator end, std::function<int(T, T)> distanceFunction) {
     T furthestPoint = *(first);
     int furthestDistance = distanceFunction(input, furthestPoint);
     int currentDistance;
@@ -119,22 +130,16 @@ std::list<T> anomalousPatternInitialisation(const std::list<T>& points, std::fun
         //find the element furthest away from the central
         T furthestMedoid = findFurthestElement<T>(startingMedoid, remaining.begin(), remaining.end(), distanceFunction);
         std::unordered_map<T, std::list<T>> clusterMap = partitionIntoClusters(startingMedoid, furthestMedoid, remaining, distanceFunction);
-        T newFurthestMedoid = centralityFunction(clusterMap[furthestMedoid]);
 
-        // repeat until the furthest medoid stays the same between iterations
-        while(newFurthestMedoid != furthestMedoid) {
+        T newFurthestMedoid;
+        do {
+            newFurthestMedoid = centralityFunction(clusterMap[furthestMedoid]);
             furthestMedoid = newFurthestMedoid;
             clusterMap = partitionIntoClusters(startingMedoid, furthestMedoid, remaining, distanceFunction);
-            newFurthestMedoid = centralityFunction(clusterMap[furthestMedoid]);
-        }
+        } while (newFurthestMedoid != furthestMedoid);
 
-        // remove all the points that are in the furthest cluster from the list of remaining points
-        for(const auto& point : clusterMap[newFurthestMedoid]) {
-            auto result = remaining.find(point);
-            if(result != remaining.end()) {
-                remaining.erase(result);
-            }
-        }
+        // remove all the points that are in the furthest cluster from the set of remaining points
+        removeItemsFromSet(remaining, clusterMap[newFurthestMedoid]);
 
         //add the medoid to the list
         medoids.push_back(newFurthestMedoid);
