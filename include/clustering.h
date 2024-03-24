@@ -1,6 +1,14 @@
 #include <unordered_map>
 #include <functional>
 #include <unordered_set>
+#include <thread>
+#include <future>
+
+template<typename T>
+struct ObjectDistance {
+    T object;
+    int distance;
+};
 
 template<typename T>
 int sumOfDistances(const T& input, const std::list<T>& points, std::function<int(T, T)> distanceFunction) {
@@ -26,20 +34,62 @@ void removeItemsFromSet(std::unordered_set<T>& set, const std::list<T>& itemsToR
 
 template<typename T>
 T findCentralMedoid(const std::list<T>& points, std::function<int(T, T)> distanceFunction) {
-    T centralPoint = points.front();
-    int shortestDistance = sumOfDistances(centralPoint, points, distanceFunction);
-    int currentDistance;
+    if(points.size() == 0) {
+        return T();
+    }
 
-    for(auto it = std::next(points.begin()); it != points.end(); ++it) {
-        currentDistance = sumOfDistances(*it, points, distanceFunction);
+    ObjectDistance<T> centralPoint = { points.front(), sumOfDistances(points.front(), points, distanceFunction) };
 
-        if(currentDistance < shortestDistance) {
-            centralPoint = *it;
-            shortestDistance = currentDistance;
+    auto blockStart = std::next(points.begin());
+
+    // some of the code is taken from C++ Concurrency in Action, 2nd edition by Anthony Williams
+    unsigned long const length = std::distance(blockStart, points.end()); //linear, would be more efficient with random access iterators
+
+    if(!length) {
+        return centralPoint.object;
+    }
+
+    unsigned long const hardwareThreads = std::thread::hardware_concurrency();
+    // size of a block we want to send to the async function
+    unsigned long const blockSize = length / hardwareThreads;
+
+    std::list<std::future<ObjectDistance<T>>> centralCandidates;
+
+    for(unsigned long i = 0; i < (hardwareThreads - 1); i++) {
+        auto blockEnd = blockStart;
+        // linear
+        std::advance(blockEnd, blockSize);
+
+        // each task will find the most central object among the subset that has been given to it
+        centralCandidates.push_back(std::async(std::launch::async, 
+            [blockStart, blockEnd, centralPoint, &points, &distanceFunction]() {
+                int currentDistance;
+                ObjectDistance<T> innerCentralPoint = centralPoint;
+
+                for(auto it = blockStart; it != blockEnd; ++it) {
+                    currentDistance = sumOfDistances(*it, points, distanceFunction);
+
+                    if(currentDistance < innerCentralPoint.distance) {
+                        innerCentralPoint = { *it, currentDistance };
+                    }
+                }
+
+                return innerCentralPoint;
+            }));
+
+        blockStart = blockEnd;
+    }
+
+    // find the most central point among the candidates
+    for(auto& futureCandidates : centralCandidates) {
+        ObjectDistance<T> currentCandidate = futureCandidates.get();
+
+        if(currentCandidate.distance < centralPoint.distance) {
+            centralPoint = currentCandidate;
         }
     }
 
-    return centralPoint;
+    return centralPoint.object;
 }
 
 template<typename T, typename Iterator>
