@@ -5,8 +5,8 @@
 #include <fstream>
 #include <chrono>
 
-#include "clustering.h"
-#include "spellchecker.h"
+#include "../include/clustering.h"
+#include "../include/spellchecker.h"
 
 int readWordsFromFile(std::list<std::string>& words, std::string filePath);
 int validateArgumentCount(int argc);
