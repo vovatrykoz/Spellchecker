@@ -45,7 +45,7 @@ std::unordered_map<std::string, int> baseListAroundWord(const std::string& input
     return distanceMap;
 }
 
-std::list<std::string> findClosestWords(const std::string& input, const std::list<std::string> words, int c) {
+std::list<std::string> findClosestWords(const std::string& input, const std::list<std::string>& words, int c) {
     std::list<std::string> closest = { words.front()};
     int closestDistance = lev(input, closest.front());
     int currentDistance;

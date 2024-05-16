@@ -24,7 +24,7 @@ std::unordered_map<std::string, int> baseListAroundWord(const std::string& input
 /// @param words list of words
 /// @param c constant that determines maximum tolerable deviation from the closest distance
 /// @return word from the list of words that is the closest to the input word
-std::list<std::string> findClosestWords(const std::string& input, const std::list<std::string> words, int c);
+std::list<std::string> findClosestWords(const std::string& input, const std::list<std::string>& words, int c);
 
 /// @brief Finds the word that is the closest to the input
 /// @param input input word
