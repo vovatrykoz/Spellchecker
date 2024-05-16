@@ -24,7 +24,7 @@ int lev(std::string a, std::string b) {
             int up = mat[row - 1][col] + 1;
             int diag = mat[row - 1][col - 1] + addition;
 
-            mat[row].insert(mat[row].begin() + col, std::min(left, std::min(up, diag)));
+            mat[row][col] = std::min(left, std::min(up, diag));
         }
     }
 
