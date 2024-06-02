@@ -54,12 +54,9 @@ std::list<std::string> findClosestWords(const std::string& input, const std::lis
         currentDistance = lev(input, *it);
 
         if(currentDistance < closestDistance) {
-            for(auto jt = closest.begin(); jt != closest.end(); ++jt) {
-                if(lev(*jt, *it) > currentDistance + c) {
-                    jt = closest.erase(jt);
-                    --jt;
-                }
-            }
+            closest.remove_if([&it, currentDistance, c](std::string val) {
+                return lev(val, *it) > currentDistance + c;
+            });
 
             closest.push_back(*it);
             closestDistance = currentDistance;
