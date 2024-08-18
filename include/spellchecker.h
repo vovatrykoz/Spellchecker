@@ -5,8 +5,6 @@
 #include <unordered_map>
 #include <list>
 
-#include "clustering.h"
-
 /// @brief Calculates the levenshtein distance between two strings
 /// @param a first string
 /// @param b second string

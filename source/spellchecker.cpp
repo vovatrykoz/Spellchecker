@@ -1,4 +1,5 @@
 #include "../include/spellchecker.h"
+#include <vector>
 
 int lev(const std::string& a, const std::string& b) {
     int a_size = a.size();
