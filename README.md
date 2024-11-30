@@ -9,8 +9,6 @@ I have added an include folder, which contains two header files: spellchecker.h 
 Spellchecker.h contains all the logic connected to spellchecking, including Levenshtein distance calculation, finding the most central word, etc.
 Clustering.h contains all the functions that do the actual clustering.
 
-It is important that your compiler has the /include folder as one of the include paths if you want the project to compile successfully
-
 # Project start-up
 
 The program will now expect one argument before start-up, which is the path to a file containing all the words we want to include in the spellchecker. The file should be a .txt file, with one word per line

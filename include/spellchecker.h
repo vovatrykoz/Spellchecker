@@ -5,13 +5,11 @@
 #include <unordered_map>
 #include <list>
 
-#include "clustering.h"
-
 /// @brief Calculates the levenshtein distance between two strings
 /// @param a first string
 /// @param b second string
 /// @return number of edits needed to turn string a into b
-int lev(std::string a, std::string b);
+int lev(const std::string& a, const std::string& b);
 
 /// @brief calculate the distances from input to each word in the list and map them
 /// @param input word to calculate distnaces from

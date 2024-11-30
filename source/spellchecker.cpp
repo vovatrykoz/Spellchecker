@@ -1,6 +1,7 @@
 #include "../include/spellchecker.h"
+#include <vector>
 
-int lev(std::string a, std::string b) {
+int lev(const std::string& a, const std::string& b) {
     int a_size = a.size();
     int b_size = b.size();
     std::vector<std::vector<int>> mat(a_size + 1, std::vector<int>(b_size + 1, 0));
