@@ -1,9 +1,9 @@
-#include <string>
-#include <unordered_map>
+#include <chrono>
+#include <fstream>
 #include <iostream>
 #include <list>
-#include <fstream>
-#include <chrono>
+#include <string>
+#include <unordered_map>
 
 #include "../include/clustering.h"
 #include "../include/spellchecker.h"
@@ -13,15 +13,18 @@ int validateArgumentCount(int argc);
 
 void printDistanceMap(const std::unordered_map<std::string, int>& distanceMap);
 void printWelcomeInfo();
-void printClusterRepresentedBy(const std::string& representative, const std::unordered_map<std::string, int>& cluster);
-void printClusterRepresentedBy(const std::string& representative, const std::list<std::string>& cluster);
-void printClusterMap(const std::unordered_map<std::string, std::list<std::string>>& clusterMap);
+void printClusterRepresentedBy(
+    const std::string& representative,
+    const std::unordered_map<std::string, int>& cluster);
+void printClusterRepresentedBy(const std::string& representative,
+                               const std::list<std::string>& cluster);
+void printClusterMap(
+    const std::unordered_map<std::string, std::list<std::string>>& clusterMap);
 void printListOfWords(const std::list<std::string>& words);
 
 // Drivers code
-int main(int argc, char *argv[])
-{
-    if(validateArgumentCount(argc) != 0) {
+int main(int argc, char* argv[]) {
+    if (validateArgumentCount(argc) != 0) {
         return -1;
     }
 
@@ -30,7 +33,7 @@ int main(int argc, char *argv[])
 
     std::cout << "Reading file at " << filePath << " ... " << std::flush;
 
-    if(readWordsFromFile(words, filePath) != 0) {
+    if (readWordsFromFile(words, filePath) != 0) {
         return -1;
     }
 
@@ -40,36 +43,45 @@ int main(int argc, char *argv[])
     auto start = std::chrono::high_resolution_clock::now();
     auto clusterMap = partitionAroundMedoids<std::string>(words, &lev);
     auto stop = std::chrono::high_resolution_clock::now();
-    auto sduration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
-    std::cout << "Done in " << sduration.count() << " s!" << std::endl << std::endl;
+    auto sduration =
+        std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+    std::cout << "Done in " << sduration.count() << " s!" << std::endl
+              << std::endl;
 
     int total = 0;
 
-    for(const auto& clust : clusterMap) {
+    for (const auto& clust : clusterMap) {
         total += clust.second.size();
     }
 
     std::string input = "";
 
-    std::cout << "Enter your word and the program will try to correct it" << std::endl << std::endl;
+    std::cout << "Enter your word and the program will try to correct it"
+              << std::endl
+              << std::endl;
     printWelcomeInfo();
 
-    while(true) {
+    while (true) {
         std::cout << "Word: ";
         std::cin >> input;
 
-        //unfortunatelly, C++ doesn't allow to have switch statements for strings
-        
-        if(input == "/q") {
+        // unfortunatelly, C++ doesn't allow to have switch statements for
+        // strings
+
+        if (input == "/q") {
             break;
         }
 
-        if(input == "/cent") {
-            std::cout << "Finding the most central word in the original word list" << "... " << std::flush;
-            std::string centralWord = findCentralMedoid<std::string>(words, &lev);
+        if (input == "/cent") {
+            std::cout
+                << "Finding the most central word in the original word list"
+                << "... " << std::flush;
+            std::string centralWord =
+                findCentralMedoid<std::string>(words, &lev);
             std::cout << "Done!" << std::endl;
 
-            std::cout << "Calculating distances to all other words" << "... " << std::flush;
+            std::cout << "Calculating distances to all other words" << "... "
+                      << std::flush;
             auto distanceMap = baseListAroundWord(centralWord, words);
             std::cout << "Done!" << std::endl;
 
@@ -78,23 +90,26 @@ int main(int argc, char *argv[])
             continue;
         }
 
-        if(input == "/clus") {
+        if (input == "/clus") {
             printClusterMap(clusterMap);
             continue;
         }
 
-        if(input == "/help") {
+        if (input == "/help") {
             std::cout << std::endl;
             printWelcomeInfo();
             continue;
         }
 
         start = std::chrono::high_resolution_clock::now();
-        std::list<std::string> suggestions = findClosestCandidates(input, clusterMap);
+        std::list<std::string> suggestions =
+            findClosestCandidates(input, clusterMap);
         stop = std::chrono::high_resolution_clock::now();
-        auto mduration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        auto mduration =
+            std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 
-        std::cout << "Corrections (" << mduration.count() << " microseconds):"<< std::endl;
+        std::cout << "Corrections (" << mduration.count()
+                  << " microseconds):" << std::endl;
         printListOfWords(suggestions);
         std::cout << std::endl;
     }
@@ -103,13 +118,14 @@ int main(int argc, char *argv[])
 }
 
 int validateArgumentCount(int argc) {
-    if(argc < 2) {
+    if (argc < 2) {
         std::cout << "Provide the path to your lexicographical data\n";
         return -1;
     }
 
-    if(argc > 2) {
-        std::cerr << "Too many arguments. The program can only take one file at a time\n";
+    if (argc > 2) {
+        std::cerr << "Too many arguments. The program can only take one file "
+                     "at a time\n";
         return -1;
     }
 
@@ -123,31 +139,35 @@ int validateArgumentCount(int argc) {
 int readWordsFromFile(std::list<std::string>& words, std::string filePath) {
     std::ifstream file(filePath);
 
-    if(!file.is_open()) {
-        std::cerr << std::endl << "File at " << filePath << " could not be opened" << std::endl;
+    if (!file.is_open()) {
+        std::cerr << std::endl
+                  << "File at " << filePath << " could not be opened"
+                  << std::endl;
         return -1;
     }
 
     std::string line;
 
-    while(getline(file, line)) {
+    while (getline(file, line)) {
         words.push_back(line);
     }
 
     file.close();
 
-    if(words.empty()) {
-        std::cerr << std::endl << "File at " << filePath << " was empty" << std::endl;
+    if (words.empty()) {
+        std::cerr << std::endl
+                  << "File at " << filePath << " was empty" << std::endl;
         return -1;
     }
-    
+
     return 0;
 }
 
 void printDistanceMap(const std::unordered_map<std::string, int>& distanceMap) {
     std::cout << std::endl;
-    for(const auto& wordDistancePair : distanceMap) {
-        std::cout << wordDistancePair.first << ": " << wordDistancePair.second << std::endl;
+    for (const auto& wordDistancePair : distanceMap) {
+        std::cout << wordDistancePair.first << ": " << wordDistancePair.second
+                  << std::endl;
     }
     std::cout << std::endl;
 }
@@ -155,34 +175,45 @@ void printDistanceMap(const std::unordered_map<std::string, int>& distanceMap) {
 void printWelcomeInfo() {
     std::cout << "Special commands:" << std::endl << std::endl;
     std::cout << "/q - quit the program" << std::endl;
-    std::cout << "/cent - calculate the most central element of the list and print the Levenshtein distance between all elements and the most central node" << std::endl;
-    std::cout << "/clus - print the clusters found by the program" << std::endl << std::endl;
-    std::cout << "/help - print this information again" << std::endl << std::endl;
+    std::cout << "/cent - calculate the most central element of the list and "
+                 "print the Levenshtein distance between all elements and the "
+                 "most central node"
+              << std::endl;
+    std::cout << "/clus - print the clusters found by the program" << std::endl
+              << std::endl;
+    std::cout << "/help - print this information again" << std::endl
+              << std::endl;
 }
 
-void printClusterRepresentedBy(const std::string& representative, const std::unordered_map<std::string, int>& cluster) {
+void printClusterRepresentedBy(
+    const std::string& representative,
+    const std::unordered_map<std::string, int>& cluster) {
     std::cout << std::endl << representative << ":" << std::endl;
-    for(const auto& wordDistancePair : cluster) {
-        std::cout << "\t" << wordDistancePair.first << ": " << wordDistancePair.second << std::endl;
+    for (const auto& wordDistancePair : cluster) {
+        std::cout << "\t" << wordDistancePair.first << ": "
+                  << wordDistancePair.second << std::endl;
     }
     std::cout << std::endl;
 }
 
-void printClusterRepresentedBy(const std::string& representative, const std::list<std::string>& cluster) {
+void printClusterRepresentedBy(const std::string& representative,
+                               const std::list<std::string>& cluster) {
     std::cout << std::endl << representative << ":" << std::endl;
-    for(const auto& wordDistancePair : cluster) {
+    for (const auto& wordDistancePair : cluster) {
         std::cout << "\t" << wordDistancePair << std::endl;
     }
     std::cout << std::endl;
 }
 
-void printClusterMap(const std::unordered_map<std::string, std::list<std::string>>& clusterMap) {
+void printClusterMap(
+    const std::unordered_map<std::string, std::list<std::string>>& clusterMap) {
     std::cout << std::endl;
 
-    for(const auto& wordClusterPair : clusterMap) {
-        std::cout << wordClusterPair.first << " (" << wordClusterPair.second.size() << "):" << std::endl;
-        
-        for(const auto& word : wordClusterPair.second) {
+    for (const auto& wordClusterPair : clusterMap) {
+        std::cout << wordClusterPair.first << " ("
+                  << wordClusterPair.second.size() << "):" << std::endl;
+
+        for (const auto& word : wordClusterPair.second) {
             std::cout << "\t" << word << std::endl;
         }
     }
@@ -191,7 +222,7 @@ void printClusterMap(const std::unordered_map<std::string, std::list<std::string
 }
 
 void printListOfWords(const std::list<std::string>& words) {
-    for(const auto& word : words) {
+    for (const auto& word : words) {
         std::cout << "\t" << word << std::endl;
     }
 }
