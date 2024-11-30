@@ -1,5 +1,6 @@
 #include "../include/spellchecker.h"
 
+#include <list>
 #include <vector>
 
 int lev(const std::string& a, const std::string& b) {
@@ -37,7 +38,7 @@ int lev(const std::string& a, const std::string& b) {
 }
 
 std::unordered_map<std::string, int> baseListAroundWord(
-    const std::string& input, const std::list<std::string>& words) {
+    const std::string& input, const std::vector<std::string>& words) {
     std::unordered_map<std::string, int> distanceMap;
 
     for (const auto& word : words) {
@@ -51,9 +52,9 @@ std::unordered_map<std::string, int> baseListAroundWord(
     return distanceMap;
 }
 
-std::list<std::string> findClosestWords(const std::string& input,
-                                        const std::list<std::string>& words,
-                                        int c) {
+std::vector<std::string> findClosestWords(const std::string& input,
+                                          const std::vector<std::string>& words,
+                                          int c) {
     std::list<std::string> closest = {words.front()};
     int closestDistance = lev(input, closest.front());
     int currentDistance;
@@ -74,14 +75,17 @@ std::list<std::string> findClosestWords(const std::string& input,
         }
     }
 
-    return closest;
+    return std::vector<std::string>{
+        std::make_move_iterator(std::begin(closest)),
+        std::make_move_iterator(std::end(closest))};
 }
 
-std::list<std::string> findClosestCandidates(
+std::vector<std::string> findClosestCandidates(
     const std::string& input,
-    const std::unordered_map<std::string, std::list<std::string>>& clusterMap) {
-    std::list<std::string> clusterKeys;
-    std::list<std::string> closestClusterRepresentatives;
+    const std::unordered_map<std::string, std::vector<std::string>>&
+        clusterMap) {
+    std::vector<std::string> clusterKeys;
+    std::vector<std::string> closestClusterRepresentatives;
 
     // put all the cluster representatives in a list
     for (const auto& wordClusterPairs : clusterMap) {
@@ -90,10 +94,10 @@ std::list<std::string> findClosestCandidates(
 
     closestClusterRepresentatives = findClosestWords(input, clusterKeys, 0);
 
-    std::list<std::string> closestWords;
+    std::vector<std::string> closestWords;
 
     for (const auto& representative : closestClusterRepresentatives) {
-        std::list<std::string> closest =
+        std::vector<std::string> closest =
             findClosestWords(input, clusterMap.at(representative), 0);
         closestWords.insert(closestWords.end(), closest.begin(), closest.end());
     }

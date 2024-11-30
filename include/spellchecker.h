@@ -1,7 +1,7 @@
 #ifndef _SPELLCHECKER_H_
 #define _SPELLCHECKER_H_
 
-#include <list>
+#include <vector>
 #include <string>
 #include <unordered_map>
 
@@ -18,7 +18,7 @@ int lev(const std::string& a, const std::string& b);
 /// @return map containing each word in words as the key and distance from that
 /// word to input as the value
 std::unordered_map<std::string, int> baseListAroundWord(
-    const std::string& input, const std::list<std::string>& words);
+    const std::string& input, const std::vector<std::string>& words);
 
 /// @brief Finds the word that is closest to the input word in the list
 /// @param input base word
@@ -26,8 +26,8 @@ std::unordered_map<std::string, int> baseListAroundWord(
 /// @param c constant that determines maximum tolerable deviation from the
 /// closest distance
 /// @return word from the list of words that is the closest to the input word
-std::list<std::string> findClosestWords(const std::string& input,
-                                        const std::list<std::string>& words,
+std::vector<std::string> findClosestWords(const std::string& input,
+                                        const std::vector<std::string>& words,
                                         int c);
 
 /// @brief Finds the word that is the closest to the input
@@ -35,8 +35,8 @@ std::list<std::string> findClosestWords(const std::string& input,
 /// @param clusterMap map of clusters where values are clusters (list of words)
 /// and key is the most central word in the cluster
 /// @return the closest word to the input
-std::list<std::string> findClosestCandidates(
+std::vector<std::string> findClosestCandidates(
     const std::string& input,
-    const std::unordered_map<std::string, std::list<std::string>>& clusterMap);
+    const std::unordered_map<std::string, std::vector<std::string>>& clusterMap);
 
 #endif

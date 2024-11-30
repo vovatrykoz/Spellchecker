@@ -8,7 +8,7 @@
 #include "../include/clustering.h"
 #include "../include/spellchecker.h"
 
-int readWordsFromFile(std::list<std::string>& words, std::string filePath);
+int readWordsFromFile(std::vector<std::string>& words, std::string filePath);
 int validateArgumentCount(int argc);
 
 void printDistanceMap(const std::unordered_map<std::string, int>& distanceMap);
@@ -17,10 +17,10 @@ void printClusterRepresentedBy(
     const std::string& representative,
     const std::unordered_map<std::string, int>& cluster);
 void printClusterRepresentedBy(const std::string& representative,
-                               const std::list<std::string>& cluster);
+                               const std::vector<std::string>& cluster);
 void printClusterMap(
-    const std::unordered_map<std::string, std::list<std::string>>& clusterMap);
-void printListOfWords(const std::list<std::string>& words);
+    const std::unordered_map<std::string, std::vector<std::string>>& clusterMap);
+void printListOfWords(const std::vector<std::string>& words);
 
 // Drivers code
 int main(int argc, char* argv[]) {
@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    std::list<std::string> words;
+    std::vector<std::string> words;
     std::string filePath = argv[1];
 
     std::cout << "Reading file at " << filePath << " ... " << std::flush;
@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
         }
 
         start = std::chrono::high_resolution_clock::now();
-        std::list<std::string> suggestions =
+        std::vector<std::string> suggestions =
             findClosestCandidates(input, clusterMap);
         stop = std::chrono::high_resolution_clock::now();
         auto mduration =
@@ -136,7 +136,7 @@ int validateArgumentCount(int argc) {
 /// @param words list of words to be populated
 /// @param filePath path to the file to read from
 /// @return 0 on success, -1 if something went wrong
-int readWordsFromFile(std::list<std::string>& words, std::string filePath) {
+int readWordsFromFile(std::vector<std::string>& words, std::string filePath) {
     std::ifstream file(filePath);
 
     if (!file.is_open()) {
@@ -206,7 +206,7 @@ void printClusterRepresentedBy(const std::string& representative,
 }
 
 void printClusterMap(
-    const std::unordered_map<std::string, std::list<std::string>>& clusterMap) {
+    const std::unordered_map<std::string, std::vector<std::string>>& clusterMap) {
     std::cout << std::endl;
 
     for (const auto& wordClusterPair : clusterMap) {
@@ -221,7 +221,7 @@ void printClusterMap(
     std::cout << std::endl;
 }
 
-void printListOfWords(const std::list<std::string>& words) {
+void printListOfWords(const std::vector<std::string>& words) {
     for (const auto& word : words) {
         std::cout << "\t" << word << std::endl;
     }
