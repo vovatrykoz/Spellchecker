@@ -1,9 +1,9 @@
 #ifndef _SPELLCHECKER_H_
 #define _SPELLCHECKER_H_
 
-#include <vector>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 /// @brief Calculates the levenshtein distance between two strings
 /// @param a first string
@@ -27,8 +27,8 @@ std::unordered_map<std::string, int> baseListAroundWord(
 /// closest distance
 /// @return word from the list of words that is the closest to the input word
 std::vector<std::string> findClosestWords(const std::string& input,
-                                        const std::vector<std::string>& words,
-                                        int c);
+                                          const std::vector<std::string>& words,
+                                          int c);
 
 /// @brief Finds the word that is the closest to the input
 /// @param input input word
@@ -37,6 +37,7 @@ std::vector<std::string> findClosestWords(const std::string& input,
 /// @return the closest word to the input
 std::vector<std::string> findClosestCandidates(
     const std::string& input,
-    const std::unordered_map<std::string, std::vector<std::string>>& clusterMap);
+    const std::unordered_map<std::string, std::vector<std::string>>&
+        clusterMap);
 
 #endif

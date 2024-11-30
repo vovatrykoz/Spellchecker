@@ -3,10 +3,10 @@
 
 #include <functional>
 #include <future>
-#include <vector>
 #include <thread>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 template <typename T>
 struct ObjectDistance {
@@ -16,7 +16,7 @@ struct ObjectDistance {
 
 template <typename T>
 inline int sumOfDistances(const T& input, const std::vector<T>& points,
-                   const std::function<int(T, T)>& distanceFunction) {
+                          const std::function<int(T, T)>& distanceFunction) {
     int distance = 0;
 
     for (const auto& point : points) {
@@ -28,7 +28,7 @@ inline int sumOfDistances(const T& input, const std::vector<T>& points,
 
 template <typename T>
 inline void removeItemsFromSet(std::unordered_set<T>& set,
-                        const std::vector<T>& itemsToRemove) {
+                               const std::vector<T>& itemsToRemove) {
     for (const auto& item : itemsToRemove) {
         auto result = set.find(item);
 
@@ -40,7 +40,7 @@ inline void removeItemsFromSet(std::unordered_set<T>& set,
 
 template <typename T>
 inline T findCentralMedoid(const std::vector<T>& points,
-                    const std::function<int(T, T)>& distanceFunction) {
+                           const std::function<int(T, T)>& distanceFunction) {
     if (points.size() == 0) {
         return T();
     }
@@ -53,8 +53,7 @@ inline T findCentralMedoid(const std::vector<T>& points,
 
     // some of the code is taken from C++ Concurrency in Action, 2nd edition by
     // Anthony Williams
-    unsigned long const length = std::distance(
-        blockStart, points.end());
+    unsigned long const length = std::distance(blockStart, points.end());
 
     if (!length) {
         return centralPoint.object;
@@ -111,7 +110,7 @@ inline T findCentralMedoid(const std::vector<T>& points,
 
 template <typename T, typename Iterator>
 inline T findFurthestElement(const T& input, Iterator first, Iterator end,
-                      const std::function<int(T, T)>& distanceFunction) {
+                             const std::function<int(T, T)>& distanceFunction) {
     T furthestPoint = *(first);
     int furthestDistance = distanceFunction(input, furthestPoint);
     int currentDistance;
@@ -210,8 +209,9 @@ inline std::vector<T> anomalousPatternInitialisation(
         T furthestMedoid =
             findFurthestElement<T>(startingMedoid, remaining.begin(),
                                    remaining.end(), distanceFunction);
-        std::unordered_map<T, std::vector<T>> clusterMap = partitionIntoClusters(
-            startingMedoid, furthestMedoid, remaining, distanceFunction);
+        std::unordered_map<T, std::vector<T>> clusterMap =
+            partitionIntoClusters(startingMedoid, furthestMedoid, remaining,
+                                  distanceFunction);
 
         T newFurthestMedoid;
         do {

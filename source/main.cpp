@@ -19,7 +19,8 @@ void printClusterRepresentedBy(
 void printClusterRepresentedBy(const std::string& representative,
                                const std::vector<std::string>& cluster);
 void printClusterMap(
-    const std::unordered_map<std::string, std::vector<std::string>>& clusterMap);
+    const std::unordered_map<std::string, std::vector<std::string>>&
+        clusterMap);
 void printListOfWords(const std::vector<std::string>& words);
 
 // Drivers code
@@ -206,7 +207,8 @@ void printClusterRepresentedBy(const std::string& representative,
 }
 
 void printClusterMap(
-    const std::unordered_map<std::string, std::vector<std::string>>& clusterMap) {
+    const std::unordered_map<std::string, std::vector<std::string>>&
+        clusterMap) {
     std::cout << std::endl;
 
     for (const auto& wordClusterPair : clusterMap) {
