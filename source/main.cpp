@@ -5,8 +5,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "../include/clustering.h"
-#include "../include/spellchecker.h"
+#include <clustering.h>
+#include <spellchecker.h>
 
 int readWordsFromFile(std::vector<std::string>& words, std::string filePath);
 int validateArgumentCount(int argc);
