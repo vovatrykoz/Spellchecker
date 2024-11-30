@@ -25,7 +25,7 @@ std::unordered_map<std::string, int> baseListAroundWord(
 /// @param words list of words
 /// @param c constant that determines maximum tolerable deviation from the
 /// closest distance
-/// @return word from the list of words that is the closest to the input word
+/// @return words from the list of words that are the closest to the input word
 std::vector<std::string> findClosestWords(const std::string& input,
                                           const std::vector<std::string>& words,
                                           int c);
@@ -34,7 +34,7 @@ std::vector<std::string> findClosestWords(const std::string& input,
 /// @param input input word
 /// @param clusterMap map of clusters where values are clusters (list of words)
 /// and key is the most central word in the cluster
-/// @return the closest word to the input
+/// @return words closest to the input
 std::vector<std::string> findClosestCandidates(
     const std::string& input,
     const std::unordered_map<std::string, std::vector<std::string>>&
