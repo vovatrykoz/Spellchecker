@@ -54,8 +54,7 @@ inline T findCentralMedoid(const std::vector<T>& points,
     // some of the code is taken from C++ Concurrency in Action, 2nd edition by
     // Anthony Williams
     unsigned long const length = std::distance(
-        blockStart, points.end());  // linear, would be more efficient with
-                                    // random access iterators
+        blockStart, points.end());
 
     if (!length) {
         return centralPoint.object;
@@ -73,7 +72,6 @@ inline T findCentralMedoid(const std::vector<T>& points,
 
     for (unsigned long i = 0; i < (numThreads - 1); i++) {
         auto blockEnd = blockStart;
-        // linear
         std::advance(blockEnd, blockSize);
 
         // each task will find the most central object among the subset that has
