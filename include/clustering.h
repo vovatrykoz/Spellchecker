@@ -1,6 +1,7 @@
 #ifndef _CLUSTERING_H_
 #define _CLUSTERING_H_
 
+#include <algorithm>
 #include <functional>
 #include <future>
 #include <thread>
@@ -53,19 +54,19 @@ inline T findCentralMedoid(const std::vector<T>& points,
 
     // some of the code is taken from C++ Concurrency in Action, 2nd edition by
     // Anthony Williams
-    unsigned long const length = std::distance(blockStart, points.end());
+    const unsigned long length = std::distance(blockStart, points.end());
 
     if (!length) {
         return centralPoint.object;
     }
 
-    unsigned long const minPerThread = 25;
-    unsigned long const hardwareThreads = std::thread::hardware_concurrency();
-    unsigned long const maxThreads = (length + minPerThread - 1) / minPerThread;
+    const unsigned long minPerThread = 25;
+    const unsigned long hardwareThreads = std::thread::hardware_concurrency();
+    const unsigned long maxThreads = (length + minPerThread - 1) / minPerThread;
     // size of a block we want to send to the async function
-    unsigned long const numThreads =
+    const unsigned long numThreads =
         std::min(hardwareThreads != 0 ? hardwareThreads : 2, maxThreads);
-    unsigned long const blockSize = length / numThreads;
+    const unsigned long blockSize = length / numThreads;
 
     std::list<std::future<ObjectDistance<T>>> centralCandidates;
 

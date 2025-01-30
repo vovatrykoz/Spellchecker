@@ -4,8 +4,8 @@
 #include <vector>
 
 int lev(const std::string& a, const std::string& b) {
-    int a_size = a.size();
-    int b_size = b.size();
+    const std::size_t a_size = a.size();
+    const std::size_t b_size = b.size();
     std::vector<std::vector<int>> mat(a_size + 1,
                                       std::vector<int>(b_size + 1, 0));
 
@@ -19,16 +19,18 @@ int lev(const std::string& a, const std::string& b) {
 
     int addition = 0;
 
-    for (int row = 1; row <= a_size; row++) {
-        for (int col = 1; col <= b_size; col++) {
-            if (a[row - 1] == b[col - 1])
+    for (std::size_t row = 1; row <= a_size; row++) {
+        for (std::size_t col = 1; col <= b_size; col++) {
+            if (a[row - 1] == b[col - 1]) {
                 addition = 0;
-            else
+            }
+            else {
                 addition = 1;
+            }
 
-            int left = mat[row][col - 1] + 1;
-            int up = mat[row - 1][col] + 1;
-            int diag = mat[row - 1][col - 1] + addition;
+            const int left = mat[row][col - 1] + 1;
+            const int up = mat[row - 1][col] + 1;
+            const int diag = mat[row - 1][col - 1] + addition;
 
             mat[row][col] = std::min(left, std::min(up, diag));
         }
@@ -87,6 +89,7 @@ std::vector<std::string> findClosestCandidates(
     std::vector<std::string> clusterKeys;
     std::vector<std::string> closestClusterRepresentatives;
 
+    clusterKeys.reserve(clusterMap.size());
     // put all the cluster representatives in a list
     for (const auto& wordClusterPairs : clusterMap) {
         clusterKeys.push_back(wordClusterPairs.first);
