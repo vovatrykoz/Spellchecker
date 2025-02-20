@@ -68,7 +68,7 @@ inline T findCentralMedoid(const std::vector<T>& points,
         std::min(hardwareThreads != 0 ? hardwareThreads : 2, maxThreads);
     const unsigned long blockSize = length / numThreads;
 
-    std::list<std::future<ObjectDistance<T>>> centralCandidates;
+    std::vector<std::future<ObjectDistance<T>>> centralCandidates;
 
     for (unsigned long i = 0; i < (numThreads - 1); i++) {
         auto blockEnd = blockStart;
