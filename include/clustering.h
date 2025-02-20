@@ -31,7 +31,7 @@ template <typename T>
 inline void removeItemsFromSet(std::unordered_set<T>& set,
                                const std::vector<T>& itemsToRemove) {
     for (const auto& item : itemsToRemove) {
-        auto result = set.find(item);
+        const auto result = set.find(item);
 
         if (result != set.end()) {
             set.erase(result);
@@ -114,10 +114,9 @@ inline T findFurthestElement(const T& input, Iterator first, Iterator end,
                              const std::function<int(T, T)>& distanceFunction) {
     T furthestPoint = *(first);
     int furthestDistance = distanceFunction(input, furthestPoint);
-    int currentDistance;
 
     for (auto it = std::next(first); it != end; ++it) {
-        currentDistance = distanceFunction(input, *it);
+        const int currentDistance = distanceFunction(input, *it);
 
         if (currentDistance > furthestDistance) {
             furthestPoint = *it;
@@ -145,11 +144,10 @@ inline std::unordered_map<T, std::vector<T>> partitionIntoClusters(
     const std::unordered_set<T>& points,
     const std::function<int(T, T)>& distanceFunction) {
     std::unordered_map<T, std::vector<T>> clusterMap;
-    int distanceToFirst, distanceToSecond;
 
     for (const auto& point : points) {
-        distanceToFirst = distanceFunction(point, firstMedoid);
-        distanceToSecond = distanceFunction(point, secondMedoid);
+        const int distanceToFirst = distanceFunction(point, firstMedoid);
+        const int distanceToSecond = distanceFunction(point, secondMedoid);
 
         if (distanceToFirst < distanceToSecond) {
             clusterMap[firstMedoid].push_back(point);
@@ -166,7 +164,6 @@ inline std::unordered_map<T, std::vector<T>> partitionIntoClusters(
     const std::vector<T>& medoids, const std::vector<T>& points,
     const std::function<int(T, T)>& distanceFunction) {
     std::unordered_map<T, std::vector<T>> clusterMap;
-    int distanceToFirst, distanceToSecond;
 
     // for each of the points, find the closest medoid and assign it there
     for (const auto& point : points) {
@@ -196,7 +193,7 @@ inline std::vector<T> anomalousPatternInitialisation(
     std::vector<T> medoids;
 
     // find the most central element
-    T startingMedoid = findCentralMedoid(points, distanceFunction);
+    const T startingMedoid = findCentralMedoid(points, distanceFunction);
 
     std::unordered_set<T> remaining;
 
@@ -249,12 +246,10 @@ template <typename T>
 inline std::unordered_map<T, std::vector<T>> partitionAroundMedoids(
     const std::vector<T>& points, std::function<int(T, T)> distanceFunction,
     const std::function<T(const std::vector<T>&)>& centralityFunction) {
-    std::unordered_map<T, std::vector<T>> clusterMap;
-
     // find the most optimal medoids (points that will be used to represent
     // clusters)
-    auto medoids = anomalousPatternInitialisation(points, distanceFunction,
-                                                  centralityFunction);
+    const auto medoids = anomalousPatternInitialisation(
+        points, distanceFunction, centralityFunction);
 
     // split the list of points into clusters using the medoids (central points)
     // calculated earlier

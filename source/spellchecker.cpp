@@ -1,5 +1,6 @@
 #include "../include/spellchecker.h"
 
+#include <algorithm>
 #include <list>
 #include <vector>
 
@@ -17,16 +18,9 @@ int lev(const std::string& a, const std::string& b) {
         mat[0][col] = col;
     }
 
-    int addition = 0;
-
     for (std::size_t row = 1; row <= a_size; row++) {
         for (std::size_t col = 1; col <= b_size; col++) {
-            if (a[row - 1] == b[col - 1]) {
-                addition = 0;
-            }
-            else {
-                addition = 1;
-            }
+            const int addition = a[row - 1] == b[col - 1] ? 0 : 1;
 
             const int left = mat[row][col - 1] + 1;
             const int up = mat[row - 1][col] + 1;
@@ -57,17 +51,17 @@ std::unordered_map<std::string, int> baseListAroundWord(
 std::vector<std::string> findClosestWords(const std::string& input,
                                           const std::vector<std::string>& words,
                                           int c) {
-    std::list<std::string> closest = {words.front()};
+    std::vector<std::string> closest = {words.front()};
     int closestDistance = lev(input, closest.front());
-    int currentDistance;
 
     for (auto it = std::next(words.begin()); it != words.end(); ++it) {
-        currentDistance = lev(input, *it);
+        const int currentDistance = lev(input, *it);
 
         if (currentDistance < closestDistance) {
-            closest.remove_if([&it, currentDistance, c](std::string val) {
-                return lev(val, *it) > currentDistance + c;
-            });
+            std::remove_if(closest.begin(), closest.end(),
+                           [&it, currentDistance, c](std::string val) {
+                               return lev(val, *it) > currentDistance + c;
+                           });
 
             closest.push_back(*it);
             closestDistance = currentDistance;
@@ -87,7 +81,6 @@ std::vector<std::string> findClosestCandidates(
     const std::unordered_map<std::string, std::vector<std::string>>&
         clusterMap) {
     std::vector<std::string> clusterKeys;
-    std::vector<std::string> closestClusterRepresentatives;
 
     clusterKeys.reserve(clusterMap.size());
     // put all the cluster representatives in a list
@@ -95,12 +88,13 @@ std::vector<std::string> findClosestCandidates(
         clusterKeys.push_back(wordClusterPairs.first);
     }
 
-    closestClusterRepresentatives = findClosestWords(input, clusterKeys, 0);
+    const std::vector<std::string> closestClusterRepresentatives =
+        findClosestWords(input, clusterKeys, 0);
 
     std::vector<std::string> closestWords;
 
     for (const auto& representative : closestClusterRepresentatives) {
-        std::vector<std::string> closest =
+        const std::vector<std::string> closest =
             findClosestWords(input, clusterMap.at(representative), 0);
         closestWords.insert(closestWords.end(), closest.begin(), closest.end());
     }
