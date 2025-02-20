@@ -1,3 +1,6 @@
+#include <clustering.h>
+#include <spellchecker.h>
+
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -5,10 +8,8 @@
 #include <string>
 #include <unordered_map>
 
-#include <clustering.h>
-#include <spellchecker.h>
-
-int readWordsFromFile(std::vector<std::string>& words, std::string filePath);
+int readWordsFromFile(std::vector<std::string>& words,
+                      const std::string& filePath);
 int validateArgumentCount(int argc);
 
 void printDistanceMap(const std::unordered_map<std::string, int>& distanceMap);
@@ -30,7 +31,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::vector<std::string> words;
-    std::string filePath = argv[1];
+    const std::string filePath = argv[1];
 
     std::cout << "Reading file at " << filePath << " ... " << std::flush;
 
@@ -44,7 +45,7 @@ int main(int argc, char* argv[]) {
     auto start = std::chrono::high_resolution_clock::now();
     auto clusterMap = partitionAroundMedoids<std::string>(words, &lev);
     auto stop = std::chrono::high_resolution_clock::now();
-    auto sduration =
+    const auto sduration =
         std::chrono::duration_cast<std::chrono::seconds>(stop - start);
     std::cout << "Done in " << sduration.count() << " s!" << std::endl
               << std::endl;
@@ -77,13 +78,13 @@ int main(int argc, char* argv[]) {
             std::cout
                 << "Finding the most central word in the original word list"
                 << "... " << std::flush;
-            std::string centralWord =
+            const std::string centralWord =
                 findCentralMedoid<std::string>(words, &lev);
             std::cout << "Done!" << std::endl;
 
             std::cout << "Calculating distances to all other words" << "... "
                       << std::flush;
-            auto distanceMap = baseListAroundWord(centralWord, words);
+            const auto distanceMap = baseListAroundWord(centralWord, words);
             std::cout << "Done!" << std::endl;
 
             printClusterRepresentedBy(centralWord, distanceMap);
@@ -103,10 +104,10 @@ int main(int argc, char* argv[]) {
         }
 
         start = std::chrono::high_resolution_clock::now();
-        std::vector<std::string> suggestions =
+        const std::vector<std::string> suggestions =
             findClosestCandidates(input, clusterMap);
         stop = std::chrono::high_resolution_clock::now();
-        auto mduration =
+        const auto mduration =
             std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 
         std::cout << "Corrections (" << mduration.count()
@@ -137,7 +138,8 @@ int validateArgumentCount(int argc) {
 /// @param words list of words to be populated
 /// @param filePath path to the file to read from
 /// @return 0 on success, -1 if something went wrong
-int readWordsFromFile(std::vector<std::string>& words, std::string filePath) {
+int readWordsFromFile(std::vector<std::string>& words,
+                      const std::string& filePath) {
     std::ifstream file(filePath);
 
     if (!file.is_open()) {
@@ -198,7 +200,7 @@ void printClusterRepresentedBy(
 }
 
 void printClusterRepresentedBy(const std::string& representative,
-                               const std::list<std::string>& cluster) {
+                               const std::vector<std::string>& cluster) {
     std::cout << std::endl << representative << ":" << std::endl;
     for (const auto& wordDistancePair : cluster) {
         std::cout << "\t" << wordDistancePair << std::endl;
