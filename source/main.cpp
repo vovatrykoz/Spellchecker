@@ -26,12 +26,14 @@ void printListOfWords(const std::vector<std::string>& words);
 
 // Drivers code
 int main(int argc, char* argv[]) {
+    std::string filePath;
     if (validateArgumentCount(argc) != 0) {
-        return -1;
+        filePath = "../data/5000_words.txt";
+    } else {
+        filePath = argv[1];
     }
 
     std::vector<std::string> words;
-    const std::string filePath = argv[1];
 
     std::cout << "Reading file at " << filePath << " ... " << std::flush;
 

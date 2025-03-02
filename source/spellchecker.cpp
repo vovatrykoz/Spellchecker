@@ -58,10 +58,13 @@ std::vector<std::string> findClosestWords(const std::string& input,
         const int currentDistance = lev(input, *it);
 
         if (currentDistance < closestDistance) {
-            std::remove_if(closest.begin(), closest.end(),
-                           [&it, currentDistance, c](std::string val) {
-                               return lev(val, *it) > currentDistance + c;
-                           });
+            const auto newEnd = std::remove_if(
+                closest.begin(), closest.end(),
+                [&it, currentDistance, c](const std::string& val) {
+                    return lev(val, *it) > currentDistance + c;
+                });
+
+            closest = std::vector<std::string>(closest.begin(), newEnd);
 
             closest.push_back(*it);
             closestDistance = currentDistance;
@@ -71,9 +74,7 @@ std::vector<std::string> findClosestWords(const std::string& input,
         }
     }
 
-    return std::vector<std::string>{
-        std::make_move_iterator(std::begin(closest)),
-        std::make_move_iterator(std::end(closest))};
+    return closest;
 }
 
 std::vector<std::string> findClosestCandidates(
