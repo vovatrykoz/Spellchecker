@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <list>
+#include <ranges>
 #include <string>
 #include <unordered_map>
 
@@ -106,11 +107,16 @@ int main(int argc, char* argv[]) {
         }
 
         start = std::chrono::high_resolution_clock::now();
-        const std::vector<std::string> suggestions =
+        std::vector<std::string> suggestions =
             findClosestCandidates(input, clusterMap);
         stop = std::chrono::high_resolution_clock::now();
         const auto mduration =
             std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
+        std::ranges::sort(suggestions,
+                          [&input](const std::string& a, const std::string& b) {
+                              return lev(input, a) < lev(input, b);
+                          });
 
         std::cout << "Corrections (" << mduration.count()
                   << " microseconds):" << std::endl;
