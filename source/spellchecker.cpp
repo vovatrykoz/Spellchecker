@@ -7,6 +7,8 @@
 #ifdef __GNUC__
 
 int lev(const std::string& a, const std::string& b) {
+    // I feel like a_size and b_size is easier to read than aSize and bSize.
+    // Thus, the style is deliberately inconsistent here
     const std::size_t a_size = a.size();
     const std::size_t b_size = b.size();
 
@@ -38,26 +40,53 @@ int lev(const std::string& a, const std::string& b) {
 
 #else
 
-#include <alloca.h>
+#define NOMINMAX // to fix the conflicts between the Window's min/max and c++ min/max
+#include <windows.h> // for alloca
+
+
+#pragma warning(push)
+
+#pragma warning(disable : 6255) // _alloca indicates failure by raising a stack overflow exception. Consider using _malloca instead
+// REASON FOR SUPPRESSION:
+//      Given the typical word length, it is pretty much impossible to overflow the stack
+//      That is unless someone deliberatelly feeds extremely long strings into the program
+//      Since this is a toy repo that is not intended to be used in a real prod environment,
+//      I decided to suppress the warning connected to the use of _alloca
+
+#pragma warning(disable : 6386) // Buffer overrun: accessing 'buffer name', the writable size is 'size1' bytes, but 'size2' bytes may be written
+// REASON FOR SUPPRESSION:
+//      The compiler thinks we might overrun the buffer when doing mat[col] = static_cast<int>(col);
+//      That is impossible with the current logic given that b_size is always going to be smaller than matrixSize
+//      Since this is a toy repo that is not intended to be used in a real prod environment,
+//      I decided to suppress this warning
+
+#pragma warning(disable : 6385) // Invalid data: accessing buffer-name, the readable size is size1 bytes, but size2 bytes may be read
+// REASON FOR SUPPRESSION:
+//      The compiler thinks we might overflow the buffer when setting the "up" value below
+//      That is impossible with the current logic given that matrixSize is always going to be bigger than (row - 1) * cols + col
+//      Since this is a toy repo that is not intended to be used in a real prod environment,
+//      I decided to suppress this warning
 
 // MSVS does not support variable length arrays
 // we have to use _alloca to manually allocate the memory on the stack instead
 int lev(const std::string& a, const std::string& b) {
+    // I feel like a_size and b_size is easier to read than aSize and bSize.
+    // Thus, the style is deliberately inconsistent here
     const std::size_t a_size = a.size();
     const std::size_t b_size = b.size();
-    const int rows = a_size + 1;
-    const int cols = b_size + 1;
-    const int matrixSize = rows * cols * sizeof(int);
+    const std::size_t rows = a_size + 1;
+    const std::size_t cols = b_size + 1;
+    const std::size_t matrixSize = rows * cols * sizeof(int);
 
     int* mat = (int*)alloca(matrixSize);
     std::memset(mat, 0, matrixSize);
 
-    for (int row = 1; row <= a_size; row++) {
-        mat[row * cols] = row;
+    for (std::size_t row = 1; row <= a_size; row++) {
+        mat[row * cols] = static_cast<int>(row);
     }
 
-    for (int col = 1; col <= b_size; col++) {
-        mat[col] = col;
+    for (std::size_t col = 1; col <= b_size; col++) {
+        mat[col] = static_cast<int>(col);
     }
 
     for (std::size_t row = 1; row <= a_size; row++) {
@@ -74,6 +103,8 @@ int lev(const std::string& a, const std::string& b) {
 
     return mat[a_size * cols + b_size];
 }
+
+#pragma warning(pop)
 
 #endif
 
