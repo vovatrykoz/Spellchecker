@@ -38,34 +38,43 @@ int lev(const std::string& a, const std::string& b) {
     return mat[a_size][b_size];
 }
 
-#else
+#else  // If compiling with MSVC
 
-#define NOMINMAX // to fix the conflicts between the Window's min/max and c++ min/max
-#include <windows.h> // for alloca
-
+#define NOMINMAX  // to fix the conflicts between the Window's min/max and c++
+                  // min/max
+#include <windows.h>  // for alloca
 
 #pragma warning(push)
 
-#pragma warning(disable : 6255) // _alloca indicates failure by raising a stack overflow exception. Consider using _malloca instead
+#pragma warning( \
+    disable : 6255)  // _alloca indicates failure by raising a stack overflow
+                     // exception. Consider using _malloca instead
 // REASON FOR SUPPRESSION:
-//      Given the typical word length, it is pretty much impossible to overflow the stack
-//      That is unless someone deliberatelly feeds extremely long strings into the program
-//      Since this is a toy repo that is not intended to be used in a real prod environment,
-//      I decided to suppress the warning connected to the use of _alloca
+//      Given the typical word length, it is pretty much impossible to overflow
+//      the stack That is unless someone deliberatelly feeds extremely long
+//      strings into the program Since this is a toy repo that is not intended
+//      to be used in a real prod environment, I decided to suppress the warning
+//      connected to the use of _alloca
 
-#pragma warning(disable : 6386) // Buffer overrun: accessing 'buffer name', the writable size is 'size1' bytes, but 'size2' bytes may be written
+#pragma warning(disable : 6386)  // Buffer overrun: accessing 'buffer name', the
+                                 // writable size is 'size1' bytes, but 'size2'
+                                 // bytes may be written
 // REASON FOR SUPPRESSION:
-//      The compiler thinks we might overrun the buffer when doing mat[col] = static_cast<int>(col);
-//      That is impossible with the current logic given that b_size is always going to be smaller than matrixSize
-//      Since this is a toy repo that is not intended to be used in a real prod environment,
+//      The compiler thinks we might overrun the buffer when doing mat[col] =
+//      static_cast<int>(col); That is impossible with the current logic given
+//      that b_size is always going to be smaller than matrixSize Since this is
+//      a toy repo that is not intended to be used in a real prod environment,
 //      I decided to suppress this warning
 
-#pragma warning(disable : 6385) // Invalid data: accessing buffer-name, the readable size is size1 bytes, but size2 bytes may be read
+#pragma warning( \
+    disable : 6385)  // Invalid data: accessing buffer-name, the readable size
+                     // is size1 bytes, but size2 bytes may be read
 // REASON FOR SUPPRESSION:
-//      The compiler thinks we might overflow the buffer when setting the "up" value below
-//      That is impossible with the current logic given that matrixSize is always going to be bigger than (row - 1) * cols + col
-//      Since this is a toy repo that is not intended to be used in a real prod environment,
-//      I decided to suppress this warning
+//      The compiler thinks we might overflow the buffer when setting the "up"
+//      value below That is impossible with the current logic given that
+//      matrixSize is always going to be bigger than (row - 1) * cols + col
+//      Since this is a toy repo that is not intended to be used in a real prod
+//      environment, I decided to suppress this warning
 
 // MSVS does not support variable length arrays
 // we have to use _alloca to manually allocate the memory on the stack instead
