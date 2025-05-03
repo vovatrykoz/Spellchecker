@@ -13,11 +13,11 @@ int lev(const std::string& a, const std::string& b) {
     int mat[a_size + 1][b_size + 1];
     std::memset(mat, 0, sizeof(mat));
 
-    for (int row = 1; row <= a_size; row++) {
+    for (std::size_t row = 1; row <= a_size; row++) {
         mat[row][0] = row;
     }
 
-    for (int col = 1; col <= b_size; col++) {
+    for (std::size_t col = 1; col <= b_size; col++) {
         mat[0][col] = col;
     }
 
