@@ -1,14 +1,15 @@
 #include "../include/spellchecker.h"
 
 #include <algorithm>
-#include <list>
+#include <cstring>
 #include <vector>
 
 int lev(const std::string& a, const std::string& b) {
     const std::size_t a_size = a.size();
     const std::size_t b_size = b.size();
-    std::vector<std::vector<int>> mat(a_size + 1,
-                                      std::vector<int>(b_size + 1, 0));
+
+    int mat[a_size + 1][b_size + 1];
+    std::memset(mat, 0, sizeof(mat));
 
     for (int row = 1; row <= a_size; row++) {
         mat[row][0] = row;
