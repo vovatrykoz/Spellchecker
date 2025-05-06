@@ -160,6 +160,14 @@ int readWordsFromFile(std::vector<std::string>& words,
     std::string line;
 
     while (getline(file, line)) {
+        if (line.size() > 50) {
+            std::cout << "The word " << line
+                      << "was longer than 50 characters\n. Words longer "
+                         "than 50 characters are not allowed\n. Ignoring "
+                      << line << "\n";
+            continue;
+        }
+
         words.push_back(line);
     }
 
