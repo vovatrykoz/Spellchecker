@@ -16,11 +16,11 @@ int lev(const std::string& a, const std::string& b) {
     std::memset(mat, 0, sizeof(mat));
 
     for (std::size_t row = 1; row <= a_size; row++) {
-        mat[row][0] = row;
+        mat[row][0] = static_cast<int>(row);
     }
 
     for (std::size_t col = 1; col <= b_size; col++) {
-        mat[0][col] = col;
+        mat[0][col] = static_cast<int>(col);
     }
 
     for (std::size_t row = 1; row <= a_size; row++) {
