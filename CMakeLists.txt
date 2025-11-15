@@ -3,7 +3,7 @@ project(Simple_Spellchecker)
 
 function(enable_maximum_warnings target)
     if(MSVC)
-        target_compile_options(${target} PRIVATE /W4 /permissive- /sdl)
+        target_compile_options(${target} PRIVATE /W4 /permissive- /sdl /WX)
         # target_compile_options(${target} PRIVATE /Wall)
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_compile_options(${target} PRIVATE
@@ -11,6 +11,7 @@ function(enable_maximum_warnings target)
             -Wno-c++98-compat
             -Wno-c++98-compat-pedantic
             -Wno-padded
+            -Werror
         )
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         target_compile_options(${target} PRIVATE
@@ -22,6 +23,7 @@ function(enable_maximum_warnings target)
             -Wshadow
             -Wdouble-promotion
             -Wformat=2
+            -Werror
         )
     endif()
 endfunction()
