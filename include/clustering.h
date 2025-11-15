@@ -54,7 +54,8 @@ inline T findCentralMedoid(const std::vector<T>& points,
 
     // some of the code is taken from C++ Concurrency in Action, 2nd edition by
     // Anthony Williams
-    const unsigned long length = std::distance(blockStart, points.end());
+    const std::size_t length =
+        static_cast<std::size_t>(std::distance(blockStart, points.end()));
 
     if (!length) {
         return centralPoint.object;

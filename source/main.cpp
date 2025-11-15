@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Done in " << sduration.count() << " s!" << "\n"
               << "\n";
 
-    int total = 0;
+    std::size_t total = 0;
 
     for (const auto& clust : clusterMap) {
         total += clust.second.size();
