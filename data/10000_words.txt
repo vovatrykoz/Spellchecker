@@ -4401,6 +4401,7 @@ imagination
 imagine
 imaging
 img
+imitate
 immediate
 immediately
 immigrants
@@ -8622,6 +8623,7 @@ substantial
 substantially
 substitute
 subtle
+subtract
 suburban
 succeed
 success

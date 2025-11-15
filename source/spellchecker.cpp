@@ -7,13 +7,11 @@
 #ifdef __GNUC__
 
 int lev(const std::string& a, const std::string& b) {
-    // I feel like a_size and b_size is easier to read than aSize and bSize.
-    // Thus, the style is deliberately inconsistent here
     const std::size_t a_size = a.size();
     const std::size_t b_size = b.size();
 
     int mat[a_size + 1][b_size + 1];
-    std::memset(mat, 0, sizeof(mat));
+    mat[0][0] = 0;
 
     for (std::size_t row = 1; row <= a_size; row++) {
         mat[row][0] = static_cast<int>(row);
@@ -25,11 +23,11 @@ int lev(const std::string& a, const std::string& b) {
 
     for (std::size_t row = 1; row <= a_size; row++) {
         for (std::size_t col = 1; col <= b_size; col++) {
-            const int addition = a[row - 1] == b[col - 1] ? 0 : 1;
+            const int adder = a[row - 1] == b[col - 1] ? 0 : 1;
 
             const int left = mat[row][col - 1] + 1;
             const int up = mat[row - 1][col] + 1;
-            const int diag = mat[row - 1][col - 1] + addition;
+            const int diag = mat[row - 1][col - 1] + adder;
 
             mat[row][col] = std::min(left, std::min(up, diag));
         }
@@ -66,9 +64,9 @@ int lev(const std::string& a, const std::string& b) {
 //      a toy repo that is not intended to be used in a real prod environment,
 //      I decided to suppress this warning
 
-#pragma warning( \
-    disable : 6385)  // Invalid data: accessing buffer-name, the readable size
-                     // is size1 bytes, but size2 bytes may be read
+#pragma warning(disable \
+                : 6385)  // Invalid data: accessing buffer-name, the readable
+                         // size is size1 bytes, but size2 bytes may be read
 // REASON FOR SUPPRESSION:
 //      The compiler thinks we might overflow the buffer when setting the "up"
 //      value below That is impossible with the current logic given that
@@ -79,8 +77,6 @@ int lev(const std::string& a, const std::string& b) {
 // MSVS does not support variable length arrays
 // we have to use _alloca to manually allocate the memory on the stack instead
 int lev(const std::string& a, const std::string& b) {
-    // I feel like a_size and b_size is easier to read than aSize and bSize.
-    // Thus, the style is deliberately inconsistent here
     const std::size_t a_size = a.size();
     const std::size_t b_size = b.size();
     const std::size_t rows = a_size + 1;
@@ -88,7 +84,7 @@ int lev(const std::string& a, const std::string& b) {
     const std::size_t matrixSize = rows * cols * sizeof(int);
 
     int* mat = (int*)alloca(matrixSize);
-    std::memset(mat, 0, matrixSize);
+    mat[0] = 0;
 
     for (std::size_t row = 1; row <= a_size; row++) {
         mat[row * cols] = static_cast<int>(row);
@@ -99,12 +95,15 @@ int lev(const std::string& a, const std::string& b) {
     }
 
     for (std::size_t row = 1; row <= a_size; row++) {
-        for (std::size_t col = 1; col <= b_size; col++) {
-            const int addition = a[row - 1] == b[col - 1] ? 0 : 1;
+        const int rowBase = row * cols;
+        const int prevRowBase = (row - 1) * cols;
 
-            const int left = mat[row * cols + (col - 1)] + 1;
-            const int up = mat[(row - 1) * cols + col] + 1;
-            const int diag = mat[(row - 1) * cols + (col - 1)] + addition;
+        for (std::size_t col = 1; col <= b_size; col++) {
+            const int adder = a[row - 1] == b[col - 1] ? 0 : 1;
+
+            const int left = mat[rowBase + (col - 1)] + 1;
+            const int up = mat[prevRowBase + col] + 1;
+            const int diag = mat[prevRowBase + (col - 1)] + adder;
 
             mat[row * cols + col] = std::min(left, std::min(up, diag));
         }
