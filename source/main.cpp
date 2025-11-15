@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     std::string filePath;
     if (argc < 2) {
         std::cout << "Provide the path to your lexicographical data\n";
-        filePath = "../data/5000_words.txt";
+        return 1;
     } else if (argc > 2) {
         std::cerr << "Too many arguments. Only one file allowed\n";
         return 1;

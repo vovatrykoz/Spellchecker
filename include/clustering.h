@@ -61,17 +61,18 @@ inline T findCentralMedoid(const std::vector<T>& points,
         return centralPoint.object;
     }
 
-    const unsigned long minPerThread = 25;
-    const unsigned long hardwareThreads = std::thread::hardware_concurrency();
-    const unsigned long maxThreads = (length + minPerThread - 1) / minPerThread;
+    const std::size_t minPerThread = 25;
+    const std::size_t hardwareThreads =
+        static_cast<std::size_t>(std::thread::hardware_concurrency());
+    const std::size_t maxThreads = (length + minPerThread - 1) / minPerThread;
     // size of a block we want to send to the async function
-    const unsigned long numThreads =
+    const std::size_t numThreads =
         std::min(hardwareThreads != 0 ? hardwareThreads : 2, maxThreads);
-    const unsigned long blockSize = length / numThreads;
+    const std::size_t blockSize = length / numThreads;
 
     std::vector<std::future<ObjectDistance<T>>> centralCandidates;
 
-    for (unsigned long i = 0; i < (numThreads - 1); i++) {
+    for (std::size_t i = 0; i < (numThreads - 1); i++) {
         auto blockEnd = blockStart;
         std::advance(blockEnd, blockSize);
 
