@@ -1,5 +1,5 @@
-#ifndef _CLUSTERING_H_
-#define _CLUSTERING_H_
+#ifndef SPELLCHECKER_CLUSTERING_H
+#define SPELLCHECKER_CLUSTERING_H
 
 #include <algorithm>
 #include <functional>
@@ -54,23 +54,25 @@ inline T findCentralMedoid(const std::vector<T>& points,
 
     // some of the code is taken from C++ Concurrency in Action, 2nd edition by
     // Anthony Williams
-    const unsigned long length = std::distance(blockStart, points.end());
+    const std::size_t length =
+        static_cast<std::size_t>(std::distance(blockStart, points.end()));
 
     if (!length) {
         return centralPoint.object;
     }
 
-    const unsigned long minPerThread = 25;
-    const unsigned long hardwareThreads = std::thread::hardware_concurrency();
-    const unsigned long maxThreads = (length + minPerThread - 1) / minPerThread;
+    const std::size_t minPerThread = 25;
+    const std::size_t hardwareThreads =
+        static_cast<std::size_t>(std::thread::hardware_concurrency());
+    const std::size_t maxThreads = (length + minPerThread - 1) / minPerThread;
     // size of a block we want to send to the async function
-    const unsigned long numThreads =
+    const std::size_t numThreads =
         std::min(hardwareThreads != 0 ? hardwareThreads : 2, maxThreads);
-    const unsigned long blockSize = length / numThreads;
+    const std::size_t blockSize = length / numThreads;
 
     std::vector<std::future<ObjectDistance<T>>> centralCandidates;
 
-    for (unsigned long i = 0; i < (numThreads - 1); i++) {
+    for (std::size_t i = 0; i < (numThreads - 1); i++) {
         auto blockEnd = blockStart;
         std::advance(blockEnd, blockSize);
 
@@ -230,18 +232,18 @@ inline std::vector<T> anomalousPatternInitialisation(
     return medoids;
 }
 
-/// @brief Iteratively partitions the given list of points into clusters using
-/// the given medoids as the starting point. The algorithm stops when the
-/// central points do not change between iterations
-/// @param startCentralMedoid central point
-/// @param startFurthestMedoid the point that lies the furthest away from the
-/// central point
-/// @param points list of all points to be sorted into clusters
-/// @param distanceFunction function used to calculate distance between points
-/// @param centralityFunction function that calculates the most central point in
-/// a list of points
-/// @return map of clusters, where the key is the most central point in a
-/// cluster and value is the cluster itself
+/// @brief Partitions a list of points into clusters using the PAM (Partitioning
+/// Around Medoids) approach. The function first determines optimal medoids
+/// (central representative points) and then assigns each point to the cluster
+/// of its nearest medoid.
+/// @tparam T Type of the points.
+/// @param points List of points to partition into clusters.
+/// @param distanceFunction Function used to calculate the distance between two
+/// points.
+/// @param centralityFunction Function used to determine the most central point
+/// in a set of points (used to select medoids).
+/// @return An unordered_map where each key is a medoid and the corresponding
+/// value is the vector of points assigned to that medoid's cluster.
 template <typename T>
 inline std::unordered_map<T, std::vector<T>> partitionAroundMedoids(
     const std::vector<T>& points, std::function<int(T, T)> distanceFunction,
@@ -256,16 +258,16 @@ inline std::unordered_map<T, std::vector<T>> partitionAroundMedoids(
     return partitionIntoClusters(medoids, points, distanceFunction);
 }
 
-/// @brief Iteratively partitions the given list of points into clusters using
-/// the given medoids as the starting point. The algorithm stops when the
-/// central points do not change between iterations
-/// @param startCentralMedoid central point
-/// @param startFurthestMedoid the point that lies the furthest away from the
-/// central point
-/// @param points list of all points to be sorted into clusters
-/// @param distanceFunction function used to calculate distance between points
-/// @return map of clusters, where the key is the most central point in a
-/// cluster and value is the cluster itself
+/// @brief Partitions a list of points into clusters using the PAM (Partitioning
+/// Around Medoids) approach. The function selects initial medoids and then
+/// assigns each point to the cluster of the nearest medoid. The process stops
+/// once the clusters are stable (medoids do not change).
+/// @tparam T Type of the points.
+/// @param points List of points to partition into clusters.
+/// @param distanceFunction Function used to calculate the distance between two
+/// points.
+/// @return An unordered_map where each key is a medoid and the corresponding
+/// value is the vector of points assigned to that medoid's cluster.
 template <typename T>
 inline std::unordered_map<T, std::vector<T>> partitionAroundMedoids(
     const std::vector<T>& points,

@@ -1,5 +1,5 @@
-#ifndef _SPELLCHECKER_H_
-#define _SPELLCHECKER_H_
+#ifndef SPELLCHECKER_SPELLCHECKER_H
+#define SPELLCHECKER_SPELLCHECKER_H
 
 #include <string>
 #include <unordered_map>
