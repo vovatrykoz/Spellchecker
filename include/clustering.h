@@ -1,5 +1,5 @@
-#ifndef _CLUSTERING_H_
-#define _CLUSTERING_H_
+#ifndef __SPELLCHECKER_CLUSTERING_H__
+#define __SPELLCHECKER_CLUSTERING_H__
 
 #include <algorithm>
 #include <functional>
@@ -231,18 +231,18 @@ inline std::vector<T> anomalousPatternInitialisation(
     return medoids;
 }
 
-/// @brief Iteratively partitions the given list of points into clusters using
-/// the given medoids as the starting point. The algorithm stops when the
-/// central points do not change between iterations
-/// @param startCentralMedoid central point
-/// @param startFurthestMedoid the point that lies the furthest away from the
-/// central point
-/// @param points list of all points to be sorted into clusters
-/// @param distanceFunction function used to calculate distance between points
-/// @param centralityFunction function that calculates the most central point in
-/// a list of points
-/// @return map of clusters, where the key is the most central point in a
-/// cluster and value is the cluster itself
+/// @brief Partitions a list of points into clusters using the PAM (Partitioning
+/// Around Medoids) approach. The function first determines optimal medoids
+/// (central representative points) and then assigns each point to the cluster
+/// of its nearest medoid.
+/// @tparam T Type of the points.
+/// @param points List of points to partition into clusters.
+/// @param distanceFunction Function used to calculate the distance between two
+/// points.
+/// @param centralityFunction Function used to determine the most central point
+/// in a set of points (used to select medoids).
+/// @return An unordered_map where each key is a medoid and the corresponding
+/// value is the vector of points assigned to that medoid's cluster.
 template <typename T>
 inline std::unordered_map<T, std::vector<T>> partitionAroundMedoids(
     const std::vector<T>& points, std::function<int(T, T)> distanceFunction,

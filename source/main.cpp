@@ -11,7 +11,6 @@
 
 int readWordsFromFile(std::vector<std::string>& words,
                       const std::string& filePath);
-int validateArgumentCount(int argc);
 
 void printDistanceMap(const std::unordered_map<std::string, int>& distanceMap);
 void printWelcomeInfo();
@@ -28,8 +27,12 @@ void printListOfWords(const std::vector<std::string>& words);
 // Drivers code
 int main(int argc, char* argv[]) {
     std::string filePath;
-    if (validateArgumentCount(argc) != 0) {
+    if (argc < 2) {
+        std::cout << "Provide the path to your lexicographical data\n";
         filePath = "../data/5000_words.txt";
+    } else if (argc > 2) {
+        std::cerr << "Too many arguments. Only one file allowed\n";
+        return 1;
     } else {
         filePath = argv[1];
     }
@@ -52,12 +55,6 @@ int main(int argc, char* argv[]) {
         std::chrono::duration_cast<std::chrono::seconds>(stop - start);
     std::cout << "Done in " << sduration.count() << " s!" << "\n"
               << "\n";
-
-    std::size_t total = 0;
-
-    for (const auto& clust : clusterMap) {
-        total += clust.second.size();
-    }
 
     std::string input = "";
 
@@ -122,21 +119,6 @@ int main(int argc, char* argv[]) {
                   << " microseconds):" << "\n";
         printListOfWords(suggestions);
         std::cout << "\n";
-    }
-
-    return 0;
-}
-
-int validateArgumentCount(int argc) {
-    if (argc < 2) {
-        std::cout << "Provide the path to your lexicographical data\n";
-        return -1;
-    }
-
-    if (argc > 2) {
-        std::cerr << "Too many arguments. The program can only take one file "
-                     "at a time\n";
-        return -1;
     }
 
     return 0;
