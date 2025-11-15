@@ -1,5 +1,5 @@
-#ifndef __SPELLCHECKER_CLUSTERING_H__
-#define __SPELLCHECKER_CLUSTERING_H__
+#ifndef SPELLCHECKER_CLUSTERING_H
+#define SPELLCHECKER_CLUSTERING_H
 
 #include <algorithm>
 #include <functional>

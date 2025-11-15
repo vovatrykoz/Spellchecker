@@ -26,6 +26,7 @@ void printListOfWords(const std::vector<std::string>& words);
 
 // Drivers code
 int main(int argc, char* argv[]) {
+    std::vector<std::string> args(argv, argv + argc);
     std::string filePath;
     if (argc < 2) {
         std::cout << "Provide the path to your lexicographical data\n";
@@ -34,7 +35,7 @@ int main(int argc, char* argv[]) {
         std::cerr << "Too many arguments. Only one file allowed\n";
         return 1;
     } else {
-        filePath = argv[1];
+        filePath = args[1];
     }
 
     std::vector<std::string> words;
