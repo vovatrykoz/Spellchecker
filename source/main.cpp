@@ -6,6 +6,7 @@
 #include <iostream>
 #include <list>
 #include <ranges>
+#include <span>
 #include <string>
 #include <unordered_map>
 
@@ -26,7 +27,7 @@ void printListOfWords(const std::vector<std::string>& words);
 
 // Drivers code
 int main(int argc, char* argv[]) {
-    std::vector<std::string> args(argv, argv + argc);
+    const std::span<char*> args(argv, static_cast<std::size_t>(argc));
     std::string filePath;
     if (argc < 2) {
         std::cout << "Provide the path to your lexicographical data\n";
