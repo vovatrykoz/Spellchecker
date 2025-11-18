@@ -11,7 +11,7 @@
 
 template <typename T>
 struct ObjectDistance {
-    T object;
+    std::size_t index;
     int distance;
 };
 
@@ -47,8 +47,7 @@ inline T findCentralMedoid(const std::vector<T>& points,
     }
 
     ObjectDistance<T> centralPoint = {
-        points.front(),
-        sumOfDistances(points.front(), points, distanceFunction)};
+        0, sumOfDistances(points.front(), points, distanceFunction)};
 
     auto blockStart = points.begin();
 
@@ -58,7 +57,7 @@ inline T findCentralMedoid(const std::vector<T>& points,
         static_cast<std::size_t>(std::distance(blockStart, points.end()));
 
     if (!length) {
-        return centralPoint.object;
+        return points[0];
     }
 
     const std::size_t minPerThread = 25;
@@ -81,15 +80,16 @@ inline T findCentralMedoid(const std::vector<T>& points,
         centralCandidates.push_back(std::async(
             std::launch::async,
             [blockStart, blockEnd, centralPoint, &points, &distanceFunction]() {
-                int currentDistance;
                 ObjectDistance<T> innerCentralPoint = centralPoint;
 
                 for (auto it = blockStart; it != blockEnd; ++it) {
-                    currentDistance =
+                    const int currentDistance =
                         sumOfDistances(*it, points, distanceFunction);
 
                     if (currentDistance < innerCentralPoint.distance) {
-                        innerCentralPoint = {*it, currentDistance};
+                        const std::size_t index = static_cast<std::size_t>(
+                            std::distance(points.begin(), it));
+                        innerCentralPoint = {index, currentDistance};
                     }
                 }
 
@@ -108,7 +108,7 @@ inline T findCentralMedoid(const std::vector<T>& points,
         }
     }
 
-    return centralPoint.object;
+    return points[centralPoint.index];
 }
 
 template <typename T, typename Iterator>
