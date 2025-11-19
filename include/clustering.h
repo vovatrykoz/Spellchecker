@@ -62,10 +62,13 @@ inline T findCentralMedoid(const std::vector<T>& points,
     const std::size_t minPerThread = 25;
     const std::size_t hardwareThreads =
         static_cast<std::size_t>(std::thread::hardware_concurrency());
+
     const std::size_t maxThreads = (length + minPerThread - 1) / minPerThread;
+
     // size of a block we want to send to the async function
     const std::size_t numThreads =
         std::min(hardwareThreads != 0 ? hardwareThreads : 2, maxThreads);
+
     const std::size_t blockSize = length / numThreads;
 
     std::vector<std::future<DistanceScore>> centralCandidates;

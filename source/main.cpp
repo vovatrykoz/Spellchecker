@@ -25,7 +25,6 @@ void printClusterMap(
         clusterMap);
 void printListOfWords(const std::vector<std::string>& words);
 
-// Drivers code
 int main(int argc, char* argv[]) {
     const std::span<char*> args(argv, static_cast<std::size_t>(argc));
 
@@ -51,8 +50,10 @@ int main(int argc, char* argv[]) {
     auto start = std::chrono::high_resolution_clock::now();
     auto clusterMap = partitionAroundMedoids<std::string>(words, &lev);
     auto stop = std::chrono::high_resolution_clock::now();
+
     const auto sduration =
         std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+
     std::cout << "Done in " << sduration.count() << " s!" << "\n"
               << "\n";
 
@@ -78,12 +79,15 @@ int main(int argc, char* argv[]) {
             std::cout
                 << "Finding the most central word in the original word list"
                 << "... " << std::flush;
+
             const std::string centralWord =
                 findCentralMedoid<std::string>(words, &lev);
+
             std::cout << "Done!" << "\n";
 
             std::cout << "Calculating distances to all other words" << "... "
                       << std::flush;
+
             const auto distanceMap = baseListAroundWord(centralWord, words);
             std::cout << "Done!" << "\n";
 
@@ -104,9 +108,12 @@ int main(int argc, char* argv[]) {
         }
 
         start = std::chrono::high_resolution_clock::now();
+
         std::vector<std::string> suggestions =
             findClosestCandidates(input, clusterMap);
+
         stop = std::chrono::high_resolution_clock::now();
+
         const auto mduration =
             std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 
@@ -156,10 +163,12 @@ int readWordsFromFile(std::vector<std::string>& words,
     while (getline(file, line)) {
         if (line.size() > 50) {
             longCounter++;
+
             if (!longLimitExceeded) {
                 if (longCounter <= 10) {
                     if (!longLog.is_open()) {
                         longLog.open("too_long_words.txt");
+
                         std::cout << "Logging too-long words to "
                                      "'too_long_words.txt'.\n";
                     }

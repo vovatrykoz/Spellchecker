@@ -180,6 +180,7 @@ std::vector<std::string> findClosestCandidates(
     for (const auto& representative : closestClusterRepresentatives) {
         const std::vector<std::string> closest =
             findClosestWords(input, clusterMap.at(representative), 0);
+
         closestWords.insert(closestWords.end(), closest.begin(), closest.end());
     }
 
