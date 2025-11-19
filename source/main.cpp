@@ -41,8 +41,6 @@ int main(int argc, char* argv[]) {
 
     std::vector<std::string> words;
 
-    std::cout << "Reading file at " << filePath << " ... " << std::flush;
-
     if (readWordsFromFile(words, filePath) != 0) {
         return -1;
     }
@@ -132,27 +130,94 @@ int main(int argc, char* argv[]) {
 /// @return 0 on success, -1 if something went wrong
 int readWordsFromFile(std::vector<std::string>& words,
                       const std::string& filePath) {
+    std::cout << "Reading file at " << filePath << " ... \n\n" << std::flush;
+
     std::ifstream file(filePath);
 
     if (!file.is_open()) {
-        std::cerr << "\n"
-                  << "File at " << filePath << " could not be opened"
+        std::cerr << "File at " << filePath << " could not be opened"
                   << "\n";
         return -1;
     }
 
     std::string line;
 
+    std::ofstream duplicateLog;
+    std::ofstream longLog;
+
+    int longCounter = 0;
+    bool longLimitExceeded = false;
+
+    int repeatedCounter = 0;
+    bool repeatedLimitExceeded = false;
+
     while (getline(file, line)) {
         if (line.size() > 50) {
-            std::cout << "The word " << line
-                      << "was longer than 50 characters\n. Words longer "
-                         "than 50 characters are not allowed\n. Ignoring "
-                      << line << "\n";
+            longCounter++;
+            if (!longLimitExceeded) {
+                if (longCounter <= 10) {
+                    if (!longLog.is_open()) {
+                        longLog.open("too_long_words.txt");
+                        std::cout << "Logging too-long words to "
+                                     "'too_long_words.txt'.\n";
+                    }
+                    longLog << line << "\n";
+
+                    std::cout
+                        << "Word exceeds 50 characters: \"" << line
+                        << "\".\n"
+                           "Words longer than 50 characters are not allowed. "
+                           "Skipping.\n\n";
+                } else {
+                    longLimitExceeded = true;
+                    std::cout
+                        << "More than 10 words exceed 50 characters. Further "
+                           "messages will be suppressed.\n\n";
+                }
+            }
             continue;
         }
 
-        words.push_back(line);
+        std::string lowerCaseLine = line;
+        std::transform(lowerCaseLine.begin(), lowerCaseLine.end(),
+                       lowerCaseLine.begin(),
+                       [](unsigned char c) { return std::tolower(c); });
+
+        if (std::find(words.begin(), words.end(), lowerCaseLine) !=
+            words.end()) {
+            repeatedCounter++;
+
+            if (!duplicateLog.is_open()) {
+                duplicateLog.open("duplicates.txt");
+                std::cout << "Logging duplicate words to 'duplicates.txt'.\n";
+            }
+
+            duplicateLog << line << "\n";
+
+            if (!repeatedLimitExceeded) {
+                if (repeatedCounter <= 15) {
+                    std::cout << "Duplicate word found: \"" << line
+                              << "\". Skipping.\n\n";
+                } else {
+                    repeatedLimitExceeded = true;
+                    std::cout << "More than 15 duplicate words found. Further "
+                                 "messages will be suppressed.\n\n";
+                }
+            }
+            continue;
+        }
+
+        words.push_back(lowerCaseLine);
+    }
+
+    if (duplicateLog.is_open()) {
+        duplicateLog.close();
+        std::cout << "Duplicates logged to 'duplicates.txt'\n";
+    }
+
+    if (longLog.is_open()) {
+        longLog.close();
+        std::cout << "Long words logged to 'too_long_words.txt'\n";
     }
 
     file.close();
@@ -162,6 +227,10 @@ int readWordsFromFile(std::vector<std::string>& words,
                   << "File at " << filePath << " was empty" << "\n";
         return -1;
     }
+
+    std::cout << "Skipped " << longCounter
+              << " word(s) longer than 50 characters\n";
+    std::cout << "Skipped " << repeatedCounter << " duplicate word(s)\n\n";
 
     return 0;
 }

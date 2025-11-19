@@ -9,8 +9,7 @@
 #include <unordered_set>
 #include <vector>
 
-template <typename T>
-struct ObjectDistance {
+struct DistanceScore {
     std::size_t index;
     int distance;
 };
@@ -46,7 +45,7 @@ inline T findCentralMedoid(const std::vector<T>& points,
         return T();
     }
 
-    ObjectDistance<T> centralPoint = {
+    DistanceScore centralPoint = {
         0, sumOfDistances(points.front(), points, distanceFunction)};
 
     auto blockStart = points.begin();
@@ -69,7 +68,7 @@ inline T findCentralMedoid(const std::vector<T>& points,
         std::min(hardwareThreads != 0 ? hardwareThreads : 2, maxThreads);
     const std::size_t blockSize = length / numThreads;
 
-    std::vector<std::future<ObjectDistance<T>>> centralCandidates;
+    std::vector<std::future<DistanceScore>> centralCandidates;
 
     for (std::size_t i = 0; i < (numThreads - 1); i++) {
         auto blockEnd = blockStart;
@@ -80,7 +79,7 @@ inline T findCentralMedoid(const std::vector<T>& points,
         centralCandidates.push_back(std::async(
             std::launch::async,
             [blockStart, blockEnd, centralPoint, &points, &distanceFunction]() {
-                ObjectDistance<T> innerCentralPoint = centralPoint;
+                DistanceScore innerCentralPoint = centralPoint;
 
                 for (auto it = blockStart; it != blockEnd; ++it) {
                     const int currentDistance =
@@ -101,7 +100,7 @@ inline T findCentralMedoid(const std::vector<T>& points,
 
     // find the most central point among the candidates
     for (auto& futureCandidates : centralCandidates) {
-        ObjectDistance<T> currentCandidate = futureCandidates.get();
+        DistanceScore currentCandidate = futureCandidates.get();
 
         if (currentCandidate.distance < centralPoint.distance) {
             centralPoint = currentCandidate;
