@@ -151,6 +151,8 @@ int readWordsFromFile(std::vector<std::string>& words,
     int repeatedCounter = 0;
     bool repeatedLimitExceeded = false;
 
+    std::unordered_set<std::string> loadedWords;
+
     while (getline(file, line)) {
         if (line.size() > 50) {
             longCounter++;
@@ -183,8 +185,7 @@ int readWordsFromFile(std::vector<std::string>& words,
                        lowerCaseLine.begin(),
                        [](unsigned char c) { return std::tolower(c); });
 
-        if (std::find(words.begin(), words.end(), lowerCaseLine) !=
-            words.end()) {
+        if (loadedWords.contains(lowerCaseLine)) {
             repeatedCounter++;
 
             if (!duplicateLog.is_open()) {
@@ -207,7 +208,7 @@ int readWordsFromFile(std::vector<std::string>& words,
             continue;
         }
 
-        words.push_back(lowerCaseLine);
+        loadedWords.insert(lowerCaseLine);
     }
 
     if (duplicateLog.is_open()) {
@@ -221,6 +222,8 @@ int readWordsFromFile(std::vector<std::string>& words,
     }
 
     file.close();
+
+    words = std::vector(loadedWords.begin(), loadedWords.end());
 
     if (words.empty()) {
         std::cerr << "\n"
