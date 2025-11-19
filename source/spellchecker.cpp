@@ -105,7 +105,7 @@ int lev(const std::string& a, const std::string& b) {
             const int up = mat[prevRowBase + col] + 1;
             const int diag = mat[prevRowBase + (col - 1)] + adder;
 
-            mat[row * cols + col] = std::min(left, std::min(up, diag));
+            mat[rowBase + col] = std::min(left, std::min(up, diag));
         }
     }
 
