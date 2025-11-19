@@ -191,8 +191,9 @@ int readWordsFromFile(std::vector<std::string>& words,
 
         std::string lowerCaseLine = line;
         std::transform(lowerCaseLine.begin(), lowerCaseLine.end(),
-                       lowerCaseLine.begin(),
-                       [](unsigned char c) { return std::tolower(c); });
+                       lowerCaseLine.begin(), [](unsigned char c) {
+                           return static_cast<unsigned char>(std::tolower(c));
+                       });
 
         if (loadedWords.contains(lowerCaseLine)) {
             repeatedCounter++;
