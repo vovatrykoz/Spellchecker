@@ -109,13 +109,15 @@ inline T findCentralMedoid(const std::vector<T>& points,
         if (currentDistance < centralPoint.distance) {
             const std::size_t index =
                 static_cast<std::size_t>(std::distance(points.begin(), it));
+
             centralPoint = {index, currentDistance};
         }
     }
 
     // find the most central point among the candidates
-    for (auto& f : centralCandidates) {
-        auto candidate = f.get();
+    for (auto& futureCandidates : centralCandidates) {
+        auto candidate = futureCandidates.get();
+
         if (candidate.distance < centralPoint.distance) {
             centralPoint = candidate;
         }
