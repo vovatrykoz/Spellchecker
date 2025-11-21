@@ -68,6 +68,13 @@ int main(int argc, char* argv[]) {
         std::cout << "Word: ";
         std::cin >> input;
 
+        if (input.length() > 50) {
+            std::cout
+                << "Error: words longer than 50 characters are not allowed"
+                << "\n\n";
+            continue;
+        }
+
         // unfortunatelly, C++ doesn't allow to have switch statements for
         // strings
 

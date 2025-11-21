@@ -101,12 +101,23 @@ inline T findCentralMedoid(const std::vector<T>& points,
         blockStart = blockEnd;
     }
 
-    // find the most central point among the candidates
-    for (auto& futureCandidates : centralCandidates) {
-        DistanceScore currentCandidate = futureCandidates.get();
+    // process the last block on the calling thread
+    for (auto it = blockStart; it != points.end(); ++it) {
+        const int currentDistance =
+            sumOfDistances(*it, points, distanceFunction);
 
-        if (currentCandidate.distance < centralPoint.distance) {
-            centralPoint = currentCandidate;
+        if (currentDistance < centralPoint.distance) {
+            const std::size_t index =
+                static_cast<std::size_t>(std::distance(points.begin(), it));
+            centralPoint = {index, currentDistance};
+        }
+    }
+
+    // find the most central point among the candidates
+    for (auto& f : centralCandidates) {
+        auto candidate = f.get();
+        if (candidate.distance < centralPoint.distance) {
+            centralPoint = candidate;
         }
     }
 
