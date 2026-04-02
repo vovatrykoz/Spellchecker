@@ -83,7 +83,7 @@ int lev(const std::string& a, const std::string& b) {
     const std::size_t cols = b_size + 1;
     const std::size_t matrixSize = rows * cols * sizeof(int);
 
-    int* mat = (int*)alloca(matrixSize);
+    int* const mat = (int*)alloca(matrixSize);
     mat[0] = 0;
 
     for (std::size_t row = 1; row <= a_size; row++) {
